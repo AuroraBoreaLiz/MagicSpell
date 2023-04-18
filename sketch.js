@@ -4,12 +4,17 @@ function setup() {
   createCanvas(400, 400);
   for (var i = 0; i <50; i++){
       electric[i] = new zip();
+    
+  
   }
 
 }
 
 function draw() {
   background(220);
+  
+  scribble = new Scribble();
+  scribble.scribbleEllipse( width/2, height/2, 50, 50 );
   
   for (var i = 0; i < 50; i++) {
     electric[i].show();
