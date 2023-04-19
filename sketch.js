@@ -1,30 +1,30 @@
 var electric = [];
-let q = 50;
+let q = 4;
 var scribble;
 let smoke = [];
 let fire = [];
+let angle = 90;
 
 function setup() {
   createCanvas(400, 400);
-  
+
+  /*
   for (var e = 0; e < q; e++){
       electric[e] = new Zip();
     
   
   }
+  */
+  electric = new Zip();
   scribble = new Scribble();
 }
 
 function draw() {
   background(220);
-
-  
-   //fill smoke array
-  //can generate more particles at once by adjusting the i< 
-  for (let i=0; i <5; i++) {
-    let s = new Smoke ();
-    smoke.push(s);
   noStroke();
+  angleMode(DEGREES);
+  
+
 
   //circle border
   push();
@@ -45,9 +45,17 @@ function draw() {
     scribble.scribbleEllipse( width/2, height/2, 40, 40 );
   pop();
   
+  electric.show();
   
-
-    
+  
+/*
+     //fill smoke array
+  //can generate more particles at once by adjusting the i< 
+  for (let i=0; i <5; i++) {
+    let s = new Smoke ();
+    smoke.push(s);
+  noStroke();
+  }  
       //fill smoke array
   //can generate more particles at once by adjusting the i< 
   for (let i=0; i <5; i++) {
@@ -68,6 +76,7 @@ function draw() {
       smoke.splice(i,1);
     }
   }
+
   //fill fire array
   //can generate more particles at once by adjusting the i< 
   for (let i=0; i <10; i++) {
@@ -90,13 +99,16 @@ function draw() {
     }
   }
  
-      
+   
   for (var e = 0; e < q; e++) {
     electric[e].show();
-    electric[e].update();
+    //electric[e].update();
   }
+
+*/  
+    
+    
   
-}
 
 
   //bolt();
@@ -108,20 +120,33 @@ function draw() {
 class Zip{
   
   constructor(){
-    this.zipx = random(0, width);
-    this.zipy = random (0, -height);
+    this.zipx = 200;//random(200, width);
+    this.zipy = 200; //random (200, -height);
+    this.zipvx = random (-1,1);
+    this.zipvy = random(-3,-1);
   }
   
 
   
   show(){
+   push(); 
+    translate(this.zipx, this.zipy);
+    scale(0.3);
+    //rotate(90);
     push();
-      translate(this.zipx, this.zipy);
-      bolt();
+      for (var r3 = 0; r3 < 15; r3++) { 
+      rotate(25);
+        bolt();
+      }
+      
     pop();
+  pop();
   }
   
   update(){
+    this.zipx += this.zipvx;
+    this.zipy += this.zipvy;
+    /*
     this.speed = random(5,10);
     this.gravity = 1.05;
     this.zipy = this.zipy + this.speed*this.gravity;
@@ -130,6 +155,7 @@ class Zip{
       this.zipy = random (0, -height);
       this.gravity = 0
     }
+    */
   }
   
 }
