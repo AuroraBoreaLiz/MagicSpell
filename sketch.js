@@ -4,8 +4,6 @@ var scribble;
 let smoke = [];
 let fire = [];
 let angle = 90;
-let sel;
-
 
 function preload() {
   //load in the table of data
@@ -19,16 +17,19 @@ function setup() {
   slider = createSlider(0,255,127);
   slider2 = createSlider(0.0,7.0,0.25, 0);
   
-  //get things from the csv file
-  blendModeOption = table.getColumn("blendModeOptions");
+
 
   electric = new Zip();
   scribble = new Scribble();
   
-  sel = createSelect();
-  sel.position(0,480);
+  this.selectRow = createSelect();
+  this.selectRow.position(0,480);
+  
+  //get things from the csv file
+  blendModeOption = table.getColumn("blendModeOptions");
+  
   for (var i = 0; i < blendModeOption.length; i++) {    
-    sel.option(table.getColumn([i]));
+    this.selectRow.option(blendModeOption[i]);
     }
   
 }
