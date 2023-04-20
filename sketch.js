@@ -5,6 +5,7 @@ let smoke = [];
 let fire = [];
 let angle = 90;
 
+
 function preload() {
   //load in the table of data
   table = loadTable("blendModeList.csv", "csv", "header");
@@ -26,11 +27,15 @@ function setup() {
   this.selectRow.position(0,480);
   
   //get things from the csv file
-  blendModeOption = table.getColumn("blendModeOptions");
+  const blendModeOption = table.getColumn("blendModeOptions");
   
   for (var i = 0; i < blendModeOption.length; i++) {    
     this.selectRow.option(blendModeOption[i]);
+    const blendy = this.selectRow.value();
+    
     }
+  
+  //
   
 }
 
@@ -39,44 +44,14 @@ function draw() {
   noStroke();
   angleMode(DEGREES);
   
-  
     //fill fire array
   //can generate more particles at once by adjusting the i< 
   for (let i=0; i <10; i++) {
     
   let f = new Fire ();
   fire.push(f);
-    
-
-  push();
-    fill(255,slider.value(),0,50);
-    blendMode(SCREEN);
-    electric.show();
-    electric.update();
-  pop();
   
-  //circle border
-  push();
-    blendMode(OVERLAY);
-    fill(0,0,0)
-    scribble.scribbleEllipse( width/2, height/2, 100, 100 );
-  pop();
-  
-  push();
-    //blendMode(ADD);
-    fill(255,100,0);
-    scribble.scribbleEllipse( width/2, height/2, 100, 100 );
-  pop();
-  
-  push();
-    //blendMode(SCREEN);
-    fill(255,204,153,50);
-    scribble.scribbleEllipse( width/2, height/2, 90, 90 );
-  pop();
-
-
   }
-
   //doing the reverse count for this array puts the later particles on top so the visual is less pleasing
   for (let i = 0; i < fire.length; i++){
     fire[i].update();
@@ -91,33 +66,66 @@ function draw() {
     }
   }  
     
+
+  push();
+    fill(255,slider.value(),0,255);
+    //blendMode(OVERLAY);
+    electric.show();
+    electric.update();
+  pop();
   
+  //circle border
+  push();
+    //blendMode(blendy);
+    //blendMode(this.selectRow.value());
+    //blendMode(SCREEN);
+    fill(0,0,0);
+    scribble.scribbleEllipse( width/2, height/2, 100, 100 );
+  pop();
+  
+  //The main ellipse for the sun. Bright
+  push();
+    blendMode(ADD);
+    fill(255,100,0);
+    scribble.scribbleEllipse( width/2, height/2, 100, 100 );
+  pop();
+  
+  //A slightly smaller circle that stacks on the main circle to pump up the color value
+  push();
+    blendMode(SCREEN);
+    fill(255,204,153,50);
+    scribble.scribbleEllipse( width/2, height/2, 90, 90 );
+  pop();
 
   //text("(" + mouseX + ", " + mouseY + ")", mouseX, mouseY);
 }
 
-//base example with rain https://editor.p5js.org/kelsierose94/sketches/MU2Y21aG0
+//This is creating the sunrays
 class Zip{
   
   constructor(){
+    
+    //position of the sunrays
     this.zipx = 200;
     this.zipy = 200;
+    //jittering of the sunrays (not currently used)
     this.zipvx = random (-1,1);
-    this.zipvy = random(-3,-1);
+    this.zipvy = random(-1,-1);
   }
   
 
-  
+  //creates the sun rays
   show(){
    push(); 
     translate(this.zipx, this.zipy);
+    //controls the size of the sun rays
     scale(slider2.value());
     
-    //rotate(90);
+    //generates the sun rays and rotates them around the sun
     push();
       for (var r3 = 0; r3 < 15; r3++) { 
       rotate(25);
-        bolt();
+      bolt();
       }
       
     pop();
@@ -127,23 +135,12 @@ class Zip{
   update(){
     //this.zipx += this.zipvx;
     //this.zipy += this.zipvy;
-    this.rotate = frameCount * 0.05;
-  }
-  
-  flip(){
-        if (!mouseIsPressed){
-    // If the mouse is not pressed, draw the image as normal
-  } else {
-    push();
-    // Scale -1, 1 means reverse the x axis, keep y the same.
-    scale(-1, 1);  
-   
-    pop();
-  }
+    //this.rotate = frameCount * 0.05;
   }
   
 }
 
+//Fire from last project but gravity is turned off and the random is now going evenly in x and y direction
 class Fire {
   
   constructor(){
@@ -181,56 +178,12 @@ class Fire {
     //the color changes as the fire goes up
     //controls the fire turning yellow to red
     this.gColor -= 5;
-    this.fScale -= 0.3;
+    this.fScale -= .01;
   }
   
   show(){
     noStroke();
     fill(this.rColor,this.gColor,this.bColor,this.alpha)
     ellipse(this.fx, this.fy, this.fScale);
-  }
-}
-
-class Smoke {
-  
-  
-  constructor(){
-    //particles start at the bottom
-    this.x = 300;
-    this.y = 380;
-    //change this to make particles go random left and right
-    this.vx = random(-1,1);
-    //change this in the negative to make the particles go up randomly
-    this.vy = random(-5,-1);
-    this.alpha = 255;
-    this.sScale = 25;
-    this.sColor = 100;
-    
-  }
-  
-  finished(){
-    //this function returns true or false
-    //when the particle fades below zero the particle dies
-    return this.alpha < 0;
-  }
-  
-  //moves the particles x and y with the random from vx and vy
-  update(){
-    this.x += this.vx;
-    this.y += this.vy;
-    //controls fade over time
-    //particle lifetime
-    this.alpha -= 5;
-    //change this to change how quickly the smoke size decreases over time
-    this.sScale -= 1.5;
-    this.sColor -= 2;
-  }
-  
-  //controls what the particle looks like
-  show () {
-    noStroke();
-    //stroke(255);
-    fill (this.sColor,this.alpha);
-    ellipse(this.x, this.y, this.sScale);
   }
 }
