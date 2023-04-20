@@ -4,87 +4,78 @@ var scribble;
 let smoke = [];
 let fire = [];
 let angle = 90;
+let sel;
 
+
+function preload() {
+  //load in the table of data
+  table = loadTable("blendModeList.csv", "csv", "header");
+}
 function setup() {
   createCanvas(400, 400);
-
-  /*
-  for (var e = 0; e < q; e++){
-      electric[e] = new Zip();
-    
   
-  }
-  */
+    // learned slider from https://codepen.io/newtonstreet/pen/BzGjYR
+  createP("Sun Beam Color "+ "~.~.~.~"+ " Sun Beam Size")
+  slider = createSlider(0,255,127);
+  slider2 = createSlider(0.0,7.0,0.25, 0);
+  
+  //get things from the csv file
+  blendModeOption = table.getColumn("blendModeOptions");
+
   electric = new Zip();
   scribble = new Scribble();
+  
+  sel = createSelect();
+  sel.position(0,480);
+  for (var i = 0; i < blendModeOption.length; i++) {    
+    sel.option(table.getColumn([i]));
+    }
+  
 }
 
 function draw() {
-  background(220);
+  background(0);
   noStroke();
   angleMode(DEGREES);
   
+  
+    //fill fire array
+  //can generate more particles at once by adjusting the i< 
+  for (let i=0; i <10; i++) {
+    
+  let f = new Fire ();
+  fire.push(f);
+    
 
-
+  push();
+    fill(255,slider.value(),0,50);
+    blendMode(SCREEN);
+    electric.show();
+    electric.update();
+  pop();
+  
   //circle border
   push();
     blendMode(OVERLAY);
-    fill(0,0,102)
+    fill(0,0,0)
     scribble.scribbleEllipse( width/2, height/2, 100, 100 );
   pop();
   
   push();
-    blendMode(OVERLAY);
-    fill(255,204,153);
-    scribble.scribbleEllipse( width/2, height/2, 50, 50 );
+    //blendMode(ADD);
+    fill(255,100,0);
+    scribble.scribbleEllipse( width/2, height/2, 100, 100 );
   pop();
   
   push();
-    blendMode(SCREEN);
+    //blendMode(SCREEN);
     fill(255,204,153,50);
-    scribble.scribbleEllipse( width/2, height/2, 40, 40 );
+    scribble.scribbleEllipse( width/2, height/2, 90, 90 );
   pop();
-  
-  electric.show();
-  
-  
-/*
-     //fill smoke array
-  //can generate more particles at once by adjusting the i< 
-  for (let i=0; i <5; i++) {
-    let s = new Smoke ();
-    smoke.push(s);
-  noStroke();
-  }  
-      //fill smoke array
-  //can generate more particles at once by adjusting the i< 
-  for (let i=0; i <5; i++) {
-    let s = new Smoke ();
-    smoke.push(s);
-    
-  }
-  
-  //for (let i = 0; i <particles.length; i++){
-  //particles.length-1 starts from the end of the array when deleting particles at the end of their lifespace so they aren't skipped when the array shifts
-  for (let i = smoke.length-1; i >= 0; i--){
-    smoke[i].update();
-    smoke[i].show();
-    if (smoke[i].finished()){
-      
-      //remove this smoke
-      //splice function removes an element from the array at position i from just that one element
-      smoke.splice(i,1);
-    }
+
+
   }
 
-  //fill fire array
-  //can generate more particles at once by adjusting the i< 
-  for (let i=0; i <10; i++) {
-    
-    let f = new Fire ();
-    fire.push(f);
-    
-  }
   //doing the reverse count for this array puts the later particles on top so the visual is less pleasing
   for (let i = 0; i < fire.length; i++){
     fire[i].update();
@@ -97,22 +88,10 @@ function draw() {
       
       fire.splice(i,1);
     }
-  }
- 
-   
-  for (var e = 0; e < q; e++) {
-    electric[e].show();
-    //electric[e].update();
-  }
-
-*/  
-    
+  }  
     
   
 
-
-  //bolt();
-  
   //text("(" + mouseX + ", " + mouseY + ")", mouseX, mouseY);
 }
 
@@ -120,8 +99,8 @@ function draw() {
 class Zip{
   
   constructor(){
-    this.zipx = 200;//random(200, width);
-    this.zipy = 200; //random (200, -height);
+    this.zipx = 200;
+    this.zipy = 200;
     this.zipvx = random (-1,1);
     this.zipvy = random(-3,-1);
   }
@@ -131,7 +110,8 @@ class Zip{
   show(){
    push(); 
     translate(this.zipx, this.zipy);
-    scale(0.3);
+    scale(slider2.value());
+    
     //rotate(90);
     push();
       for (var r3 = 0; r3 < 15; r3++) { 
@@ -144,18 +124,21 @@ class Zip{
   }
   
   update(){
-    this.zipx += this.zipvx;
-    this.zipy += this.zipvy;
-    /*
-    this.speed = random(5,10);
-    this.gravity = 1.05;
-    this.zipy = this.zipy + this.speed*this.gravity;
-    
-    if (this.zipy > height){
-      this.zipy = random (0, -height);
-      this.gravity = 0
-    }
-    */
+    //this.zipx += this.zipvx;
+    //this.zipy += this.zipvy;
+    this.rotate = frameCount * 0.05;
+  }
+  
+  flip(){
+        if (!mouseIsPressed){
+    // If the mouse is not pressed, draw the image as normal
+  } else {
+    push();
+    // Scale -1, 1 means reverse the x axis, keep y the same.
+    scale(-1, 1);  
+   
+    pop();
+  }
   }
   
 }
@@ -163,10 +146,13 @@ class Zip{
 class Fire {
   
   constructor(){
-    this.fx = random(280,320);
-    this.fy = 380;
-    this.fvx = random (-1,1);
-    this.fvy = random(-3,-1);
+    //origin position of the particles
+    this.fx = 200;
+    this.fy = 200;
+    //change this to vary the left right direction
+    this.fvx = random (-2,2);
+    //change these numbers to vary the up down direction 
+    this.fvy = random(-2,2);
     this.alpha = 155;
     //controls the starting color of R in RGB.
     this.rColor = 255;
@@ -190,11 +176,11 @@ class Fire {
     this.fx += this.fvx;
     this.fy += this.fvy;
     //controls fade over time
-    this.alpha -= 3;
+    this.alpha -= 5;
     //the color changes as the fire goes up
     //controls the fire turning yellow to red
-    this.gColor -= 2;
-    this.fScale -= 0.5;
+    this.gColor -= 5;
+    this.fScale -= 0.3;
   }
   
   show(){
