@@ -4,22 +4,7 @@ var scribble;
 let smoke = [];
 let fire = [];
 let angle = 90;
-const blendModes = [
-    {mode: BLEND, name:'BLEND'},
-    {mode: ADD, name:'ADD'},
-    {mode: DARKEST, name:'DARKEST'},
-    {mode: LIGHTEST, name:'LIGHTEST'},
-    {mode: DIFFERENCE, name:'DIFFERENCE'},
-    {mode: EXCLUSION, name:'EXCLUSION'},
-    {mode: MULTIPLY, name:'MULTIPLY'},
-    {mode: SCREEN, name:'SCREEN'},
-    {mode: REMOVE, name:'REMOVE'},
-    {mode: OVERLAY, name:'OVERLAY'},
-    {mode: HARD_LIGHT, name:'HARD_LIGHT'},
-    {mode: SOFT_LIGHT, name:'SOFT_LIGHT'},
-    {mode: DODGE, name:'DODGE'},
-    {mode: BURN, name:'BURN'},
-];
+
 
 function preload() {
   //load in the table of data
@@ -42,24 +27,17 @@ function setup() {
   dropDown = createSelect();
   dropDown.position(0,480);
   
-  blendModes.forEach((item,index) =>{
-    dropDown.option(item.mode);
-    
-  })
-/*  
-  this.selectRow = createSelect();
-  this.selectRow.position(0,480);
-  
   //get things from the csv file
-  blendModeOption = table.getColumn("blendModeOptions");
+  const blendModeOption = table.getColumn("blendModeOptions");
   
+  
+  //looping through the table to get the values in each row from the first column
   for (var i = 0; i < blendModeOption.length; i++) {    
-    this.selectRow.option(blendModeOption[i]);
-    const blendy = this.selectRow.value();
-    
+    dropDown.option(blendModeOption[i]);
     }
-*/  
-
+  blendMode(BLEND);
+  //change the default blend mode across the scene. Doesn't impact inside push pops. 
+  dropDown.changed(changeBlendy);
   
 }
 
@@ -68,7 +46,8 @@ function draw() {
   noStroke();
   angleMode(DEGREES);
   
-    //fill fire array
+  //fill fire array
+  //this fire is the little particles coming off the sun
   //can generate more particles at once by adjusting the i< 
   for (let i=0; i <10; i++) {
     
@@ -80,7 +59,7 @@ function draw() {
   for (let i = 0; i < fire.length; i++){
     fire[i].update();
     push();
-    blendMode(ADD);
+    //blendMode(ADD);
     fire[i].show();
     pop();
     //remove this fire particle when it is no longer visible
@@ -90,10 +69,10 @@ function draw() {
     }
   }  
     
-
+  //the sun rays are shown and updated. Update currently does nothing
   push();
     fill(255,slider.value(),0,255);
-    //blendMode(OVERLAY);
+    blendMode(SCREEN);
     electric.show();
     electric.update();
   pop();
@@ -102,7 +81,7 @@ function draw() {
   push();
     //blendMode(blendy);
     //blendMode(this.selectRow.value());
-    //blendMode(SCREEN);
+    blendMode(SCREEN);
     //blendMode(mode);
     fill(0,0,0);
     scribble.scribbleEllipse( width/2, height/2, 100, 100 );
@@ -110,7 +89,7 @@ function draw() {
   
   //The main ellipse for the sun. Bright
   push();
-    blendMode(ADD);
+    //blendMode(ADD);
     fill(255,100,0);
     scribble.scribbleEllipse( width/2, height/2, 100, 100 );
   pop();
@@ -203,7 +182,7 @@ class Fire {
     //the color changes as the fire goes up
     //controls the fire turning yellow to red
     this.gColor -= 5;
-    this.fScale -= .01;
+    this.fScale -= 0.01;
   }
   
   show(){
@@ -213,3 +192,50 @@ class Fire {
   }
 }
 
+function changeBlendy(){
+ 	let val = dropDown.value();
+  if(val == 'BLEND MODES'){
+    blendMode(BLEND);
+    print('Normal Blend Mode')
+  } else if(val == 'DARKEST'){
+   	blendMode(DARKEST); 
+    print('Darkest')
+  } else if(val == 'LIGHTEST'){
+   	blendMode(LIGHTEST);
+    print('Lightest')
+  } else if(val == 'DIFFERENCE'){
+   	blendMode(DIFFERENCE); 
+    print('Difference')
+  } else if(val == 'DIFFERENCE'){
+   	blendMode(EXCLUSION); 
+    print('Exclusion')
+  } else if(val == 'MULTIPLY'){
+   	blendMode(MULTIPLY); 
+    print('Multiply')
+  } else if(val == 'SCREEN'){
+   	blendMode(SCREEN); 
+    print('Screen')
+  } else if(val == 'REPLACE'){
+   	blendMode(REPLACE); 
+    print('Replace')
+  } else if(val == 'REMOVE'){
+   	blendMode(REMOVE); 
+    print('Remove')
+  } else if(val == 'OVERLAY'){
+   	blendMode(OVERLAY); 
+    print('Overlay')
+  } else if(val == 'HARD_LIGHT'){
+   	blendMode(HARD_LIGHT); 
+    print('Hard Light')
+  } else if(val == 'SOFT_LIGHT'){
+   	blendMode(SOFT_LIGHT); 
+    print('Soft Light')
+  } else if(val == 'DODGE'){
+   	blendMode(DODGE); 
+    print('Dodge')
+  } else if(val == 'BURN'){
+   	blendMode(BURN); 
+    print('Burn')
+  }
+
+}
