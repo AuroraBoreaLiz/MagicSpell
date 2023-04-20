@@ -4,7 +4,22 @@ var scribble;
 let smoke = [];
 let fire = [];
 let angle = 90;
-
+const blendModes = [
+    {mode: BLEND, name:'BLEND'},
+    {mode: ADD, name:'ADD'},
+    {mode: DARKEST, name:'DARKEST'},
+    {mode: LIGHTEST, name:'LIGHTEST'},
+    {mode: DIFFERENCE, name:'DIFFERENCE'},
+    {mode: EXCLUSION, name:'EXCLUSION'},
+    {mode: MULTIPLY, name:'MULTIPLY'},
+    {mode: SCREEN, name:'SCREEN'},
+    {mode: REMOVE, name:'REMOVE'},
+    {mode: OVERLAY, name:'OVERLAY'},
+    {mode: HARD_LIGHT, name:'HARD_LIGHT'},
+    {mode: SOFT_LIGHT, name:'SOFT_LIGHT'},
+    {mode: DODGE, name:'DODGE'},
+    {mode: BURN, name:'BURN'},
+];
 
 function preload() {
   //load in the table of data
@@ -23,19 +38,28 @@ function setup() {
   electric = new Zip();
   scribble = new Scribble();
   
+
+  dropDown = createSelect();
+  dropDown.position(0,480);
+  
+  blendModes.forEach((item,index) =>{
+    dropDown.option(item.mode);
+    
+  })
+/*  
   this.selectRow = createSelect();
   this.selectRow.position(0,480);
   
   //get things from the csv file
-  const blendModeOption = table.getColumn("blendModeOptions");
+  blendModeOption = table.getColumn("blendModeOptions");
   
   for (var i = 0; i < blendModeOption.length; i++) {    
     this.selectRow.option(blendModeOption[i]);
     const blendy = this.selectRow.value();
     
     }
-  
-  //
+*/  
+
   
 }
 
@@ -79,6 +103,7 @@ function draw() {
     //blendMode(blendy);
     //blendMode(this.selectRow.value());
     //blendMode(SCREEN);
+    //blendMode(mode);
     fill(0,0,0);
     scribble.scribbleEllipse( width/2, height/2, 100, 100 );
   pop();
@@ -187,3 +212,4 @@ class Fire {
     ellipse(this.fx, this.fy, this.fScale);
   }
 }
+
